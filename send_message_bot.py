@@ -61,7 +61,6 @@ def send_media_message(to_adress, message):
                     to_adress,
                     message
                 )
-        logger.debug(f'{datetime.datetime.utcnow().hour} all work well.')
 
     except Flood:
         app.send_message('me', text='Происходит спам сообщений')
@@ -85,18 +84,20 @@ def main():
     array = get_chat_array()
     while True:
         check_log_status()
-        now = datetime.datetime.utcnow().hour
-        if now == 5 or now == 11 or now == 13:
+        now = datetime.datetime.utcnow()
+        if now.hour == 5 or now.hour == 11 or now.hour == 14:
             send_media_message(maksim_id, MEDIA_GROUP)
+            logger.debug(f'{now.hour}:{now.minute} all work well.')
             #
             app.send_message(
                 maksim_id,
                 f'Проверка работы бота. Бот будет отправлять в 8, 14, и 17:30.'
                 f' \n Пока только мне. Вот список всех групп {array}')
             #
-        elif now == 14:
+        elif now.hour == 14:
             time.sleep(HALF_HOUR_RECYCLE)
             send_media_message(maksim_id, MEDIA_GROUP)
+            logger.debug(f'{now.hour}:{now.minute} all work well.')
             #
             app.send_message(
                 maksim_id,
@@ -105,7 +106,7 @@ def main():
             #
             time.sleep(HALF_HOUR_RECYCLE)
         else:
-            logger.debug(f'{now}, i am waiting')
+            logger.debug(f'{now.hour}:{now.minute}, i am waiting')
         time.sleep(RECYCLE_TIME)
     app.stop()
 
