@@ -30,8 +30,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 load_dotenv()
-api_id = os.getenv('M_API_ID')
-api_hash = os.getenv('M_API_HASH')
+api_id = os.getenv('I_API_ID')
+api_hash = os.getenv('I_API_HASH')
 maksim_id = os.getenv('MAKSIM_ID')
 
 app = Client('my_account', api_id, api_hash)
@@ -85,7 +85,7 @@ def main():
     while True:
         check_log_status()
         now = datetime.datetime.utcnow()
-        if now.hour == 5 or now.hour == 11 or now.hour == 14:
+        if now.hour == 5 or now.hour == 11:
             send_media_message(maksim_id, MEDIA_GROUP)
             logger.debug(f'{now.hour}:{now.minute} all work well.')
             #
