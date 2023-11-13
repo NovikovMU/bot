@@ -8,7 +8,7 @@ from pyrogram import Client
 from pyrogram.errors import BadRequest, Flood, SeeOther
 from pyrogram.types import InputMediaPhoto
 
-from constants import chat_id_array, text
+from constants import chat_id_dict, text
 
 # constants
 HALF_HOUR_RECYCLE = 1800
@@ -37,20 +37,11 @@ maksim_id = os.getenv('MAKSIM_ID')
 app = Client('my_account', api_id, api_hash)
 
 
-def check_log_status():
-    message = (next(app.get_chat_history(chat_id='me', limit=1)))
-    if message.text == 'status':
-        text = open('logs.log', 'r')
-        try:
-            app.send_message('me', text=text.read())
-        except BadRequest:
-            app.send_message('me', text='logs is empty.')
-
 def get_chat_array(array=None):
     if not array:
         array = []
     for dialog in app.get_dialogs():
-        if dialog.chat.id in chat_id_array:
+        if dialog.chat.id in chat_id_dict:
             array.append(dialog.chat.title)
     return array
 
@@ -82,32 +73,21 @@ def send_media_message(to_adress, message):
 def main():
     app.start()
     array = get_chat_array()
-    while True:
-        check_log_status()
-        now = datetime.datetime.utcnow()
-        if now.hour == 5 or now.hour == 11:
-            send_media_message(maksim_id, MEDIA_GROUP)
-            logger.debug(f'{now.hour}:{now.minute} all work well.')
-            #
-            app.send_message(
-                maksim_id,
-                f'Проверка работы бота. Бот будет отправлять в 8, 14, и 17:30.'
-                f' \n Пока только мне. Вот список всех групп {array}')
-            #
-        elif now.hour == 14:
-            time.sleep(HALF_HOUR_RECYCLE)
-            send_media_message(maksim_id, MEDIA_GROUP)
-            logger.debug(f'{now.hour}:{now.minute} all work well.')
-            #
-            app.send_message(
-                maksim_id,
-                f'Проверка работы бота. Бот будет отправлять в 8, 14, и 17:30.'
-                f' \n Пока только мне. Вот список всех групп {array}')
-            #
-            time.sleep(HALF_HOUR_RECYCLE)
-        else:
-            logger.debug(f'{now.hour}:{now.minute}, i am waiting')
-        time.sleep(RECYCLE_TIME)
+    now = datetime.datetime.utcnow()
+    send_media_message(maksim_id, MEDIA_GROUP)
+    app.send_message(
+        maksim_id,
+        f'Проверка работы бота. Бот будет отправлять в 8, 14, и 17:30.'
+        f' \n Пока только мне. Вот список всех групп {array}')
+        #
+    send_media_message(maksim_id, MEDIA_GROUP)
+    logger.debug(f'{now.hour}:{now.minute} all work well.')
+        #
+    app.send_message(
+        maksim_id,
+        f'Проверка работы бота. Бот будет отправлять в 8, 14, и 17:30.'
+        f' \n Пока только мне. Вот список всех групп {array}')
+        #
     app.stop()
 
 
